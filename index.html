@@ -2,26 +2,100 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=2160, height=3840">
 <title>Mariage J&D</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000}
-#stage{position:relative;width:100vw;height:100vh}
-.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease-in-out}
+html,body{width:2160px;height:3840px;overflow:hidden;background:#000}
+
+/* ── Zone haute — diaporama (50%) ── */
+#top{
+  position:absolute;
+  top:0;left:0;
+  width:2160px;height:1920px;
+  overflow:hidden;
+  background:#000;
+}
+.slide{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 1.2s ease-in-out;
+}
 .slide.on{opacity:1}
 .slide img{max-width:100%;max-height:100%;object-fit:contain}
-#overlay{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;opacity:0;transition:opacity 1.2s;pointer-events:none;z-index:10}
+
+/* Overlay scène Watch */
+#overlay{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;opacity:0;
+  transition:opacity 1.2s;pointer-events:none;z-index:10;
+}
 #overlay.on{opacity:1}
 #overlay img{max-width:100%;max-height:100%;object-fit:contain}
-#label{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font:12px/1 sans-serif;color:rgba(255,255,255,.25);letter-spacing:.15em;text-transform:uppercase;opacity:0;transition:opacity .8s;z-index:11;white-space:nowrap}
-#label.on{opacity:1}
-#empty{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.3);font:16px sans-serif}
+
+/* Label scène */
+#scene-label{
+  position:absolute;bottom:32px;left:50%;
+  transform:translateX(-50%);
+  font:28px/1 sans-serif;
+  color:rgba(255,255,255,.3);
+  letter-spacing:.15em;text-transform:uppercase;
+  opacity:0;transition:opacity .8s;z-index:11;white-space:nowrap;
+}
+#scene-label.on{opacity:1}
+
+/* Message dossier vide */
+#empty{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  color:rgba(255,255,255,.3);font:36px sans-serif;
+}
+
+/* ── Séparateur ── */
+#separator{
+  position:absolute;
+  top:1920px;left:0;
+  width:2160px;height:4px;
+  background:rgba(255,255,255,.08);
+}
+
+/* ── Zone basse — Zikup (50%) ── */
+#bottom{
+  position:absolute;
+  top:1924px;left:0;
+  width:2160px;height:1916px;
+  overflow:hidden;
+  background:#000;
+}
+#bottom iframe{
+  width:100%;height:100%;
+  border:none;
+  display:block;
+}
 </style>
 </head>
 <body>
-<div id="stage"></div>
-<div id="overlay"><img id="ov-img" src="" alt=""></div>
-<div id="label"></div>
+
+<div id="top">
+  <div id="stage"></div>
+  <div id="overlay"><img id="ov-img" src="" alt=""></div>
+  <div id="scene-label"></div>
+</div>
+
+<div id="separator"></div>
+
+<div id="bottom">
+  <iframe
+    src="http://tst-zikup.herokuapp.com/display/JD06"
+    scrolling="no"
+    allowfullscreen
+    sandbox="allow-scripts allow-same-origin allow-forms">
+  </iframe>
+</div>
+
 <script>
 (function(){
 var SLIDES=[{"name":"C151D143-5EC7-4704-93FC-6F64AFFDDA96.jpeg","url":"https://lh3.googleusercontent.com/d/1SX6ijvgUO9tIO9pROnew-Yf9gIL1gkXw"},{"name":"IMG_0452.jpeg","url":"https://lh3.googleusercontent.com/d/13WGtmEiBEqiZQ35XWlcCrlWxTVy0c4bQ"},{"name":"IMG_0455.jpeg","url":"https://lh3.googleusercontent.com/d/1AgOaGgTHhyMazmXyIvj3bvJQnkz9Dbxz"},{"name":"IMG_0460.jpeg","url":"https://lh3.googleusercontent.com/d/14xhnFWznkizTuB3ll2nVW8Y1srAt5_zC"},{"name":"IMG_3076.jpeg","url":"https://lh3.googleusercontent.com/d/1y7Tp9-xvM43dJzJ_uvHHz26iHlqyLrf4"},{"name":"IMG_3079.jpeg","url":"https://lh3.googleusercontent.com/d/1PYihD1A9DSjSUc3rgBVq0qfCywhmovlN"}];
@@ -33,12 +107,14 @@ var cur=0,els=[],timer=null,lastScene='__init__',inScene=false;
 var stage=document.getElementById('stage');
 var overlay=document.getElementById('overlay');
 var ovImg=document.getElementById('ov-img');
-var label=document.getElementById('label');
+var label=document.getElementById('scene-label');
+
 for(var i=0;i<SLIDES.length;i++){
   var d=document.createElement('div');d.className='slide';
   var img=document.createElement('img');img.src=SLIDES[i].url;img.alt=SLIDES[i].name;
   d.appendChild(img);stage.appendChild(d);els.push(d);
 }
+
 function show(idx){
   for(var i=0;i<els.length;i++)els[i].className='slide';
   if(els[idx])els[idx].className='slide on';
@@ -47,6 +123,7 @@ function show(idx){
 }
 function advance(){if(inScene)return;cur=(cur+1)%(els.length||1);show(cur);timer=setTimeout(advance,SLIDE_MS);}
 function start(){if(timer){clearTimeout(timer);timer=null;}if(!els.length)return;show(cur);timer=setTimeout(advance,SLIDE_MS);}
+
 function applyScene(k){
   if(k===lastScene)return;lastScene=k;
   if(k==='auto'||!SCENES[k]){
@@ -60,6 +137,7 @@ function applyScene(k){
     setTimeout(function(){overlay.className='on';if(s.label)label.className='on';},80);
   }
 }
+
 function poll(){
   if(!UPSTASH_URL)return;
   var x=new XMLHttpRequest();
@@ -72,7 +150,10 @@ function poll(){
   };
   x.send();
 }
+
 if(els.length)start();
+else document.getElementById('stage').innerHTML='<div id="empty">Aucune photo</div>';
+
 setInterval(poll,POLL_MS);poll();
 setTimeout(function(){location.reload();},REFRESH_MS);
 })();
