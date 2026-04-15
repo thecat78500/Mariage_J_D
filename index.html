@@ -154,7 +154,10 @@ function poll(){
 if(els.length)start();
 else document.getElementById('stage').innerHTML='<div id="empty">Aucune photo</div>';
 
-setInterval(poll,POLL_MS);poll();
+setInterval(function(){
+  var f=document.querySelector('#top iframe');
+  if(f){ f.src=f.src; }
+},10000);
 setTimeout(function(){location.reload();},REFRESH_MS);
 })();
 </script>
