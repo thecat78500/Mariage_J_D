@@ -1,0 +1,22 @@
+{
+  "arrivee": {
+    "url": "https://thecat78500.github.io/Mariage_J_D/scene_arrivee.jpg",
+    "label": "Arrivée des mariés"
+  },
+  "cocktail": {
+    "url": "https://thecat78500.github.io/Mariage_J_D/scene_cocktail.jpg",
+    "label": "Cocktail"
+  },
+  "diner": {
+    "url": "https://thecat78500.github.io/Mariage_J_D/scene_diner.jpg",
+    "label": "Dîner"
+  },
+  "gateau": {
+    "url": "https://thecat78500.github.io/Mariage_J_D/scene_gateau.jpg",
+    "label": "Gâteau"
+  },
+  "danse": {
+    "url": "https://thecat78500.github.io/Mariage_J_D/scene_danse.jpg",
+    "label": "Ouverture du bal"
+  }
+}
